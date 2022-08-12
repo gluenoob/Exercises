@@ -171,7 +171,7 @@ int main(int argc, char *argv[])
                             {
                                 perror("ERROR in writting to socket.\n");
                             }
-                            printf("[DL]:Received %d bytes: \n\tmsg.type: %u\n\tmsg.ue-id: %u\n\tmsg.cause: %u\n",
+                            printf("[DL]:Received %d bytes: \n\tmsg.type: %u\n" MAG "\tmsg.ue-id: %u\n" RESET "\tmsg.cause: %u\n",
                                    bytes_recv + bytes_recv2, msg1.type1, msg1.ue_id, msg1.cause);
                             printf("[UL]:Sent %d of %u bytes of msg2.\n", bytes_send, packetsize);
                             // memset(&msg1 , 0 , sizeof(msg1));

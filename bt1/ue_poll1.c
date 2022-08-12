@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <pthread.h>
 #include "bt1.h"
 
 // Current time modifier
@@ -36,7 +37,7 @@ int random_ue_id(int minN, int maxN);
 SOCKET get_connect_socket();
 
 // Send and receive msg function
-void messaging(SOCKET socketfd, int ue_id, int loopcount, int msg_per_loop);
+void *messaging(void *sockfd);
 
 // message
 /*
@@ -47,25 +48,30 @@ void messaging(SOCKET socketfd, int ue_id, int loopcount, int msg_per_loop);
 int main(int argc, char *argv[])
 {
 
-    // Start communication
+    // Set up socket for connection
     printf("Start simulating...\n");
-    int RRC_Att = 0, RRC_Succ = 0;
     srand((int)time(0));
 
-    // Chay tuan tu cac UE
+    SOCKET fds[10] = {0};
+    SOCKET sockfd;
     int ue_count = 10;
+
+    // connect ue_count socketfd to gNB
     for (int i = 0; i < ue_count; i++)
     {
-        SOCKET socketfd = get_connect_socket();
-        printf("Socket fd number: %d\n", socketfd);
-
-        // Set up for sending and receiving message
-        int ue_id = random_ue_id(100, 999);
-        int loop = 5, msg_per_loop = 10;
-        messaging(socketfd, ue_id, loop, msg_per_loop);
-        // Enter input to continue to next UE
-        getchar();
+        sockfd = get_connect_socket();
+        fds[i] = sockfd;
     }
+
+    // Multi-threading for sending and receiving simutaneously
+    pthread_t thread_id;
+
+    for (int i = 0; i < 10; i++)
+    {
+        pthread_create(&thread_id, NULL, messaging, (void *)(fds + i));
+    }
+
+    pthread_exit(NULL);
 
     return 0;
 }
@@ -110,23 +116,27 @@ SOCKET get_connect_socket()
     return socketfd;
 }
 
-void messaging(SOCKET socketfd, int ue_id, int loopcount, int msg_per_loop)
+void *messaging(void *sockfd)
 {
+    SOCKET *socketfd;
+    socketfd = (SOCKET *)sockfd;
+    int ue_id = random_ue_id(100, 999);
+    int loopcount = 10; // SECONDS
     for (int j = 0; j < loopcount; j++)
     {
-        double interval = 1;       // period of time to send msg_per_loop
+        double interval = 1;       // 1 second
         time_t start = time(NULL); // Start
         unsigned char buffer[MAX_BUF];
         RRCSetupRequest msg1 = {1, ue_id, 3};
 
         int i = 0;
-        while (i < msg_per_loop)
+        while (i < 10)
         {
             // MSG1 RRCSetupRequest
             memset(buffer, 0, MAX_BUF);
 
             unsigned int packetsize = pack_msg1(buffer, &msg1);
-            int bytes_send = send(socketfd, buffer, packetsize, 0);
+            int bytes_send = send(*socketfd, buffer, packetsize, 0);
             if (bytes_send < 0)
             {
                 perror("ERROR in writting to socket.\n");
@@ -139,7 +149,7 @@ void messaging(SOCKET socketfd, int ue_id, int loopcount, int msg_per_loop)
             // MSG2 RRCSetup
             memset(buffer, 0, MAX_BUF);
             RRCSetup msg2;
-            int bytes_recv = recv(socketfd, buffer, 1, 0);
+            int bytes_recv = recv(*socketfd, buffer, 1, 0);
             if (bytes_recv < 0)
             {
                 perror("ERROR in reading from socket\n");
@@ -156,7 +166,7 @@ void messaging(SOCKET socketfd, int ue_id, int loopcount, int msg_per_loop)
                 memset(buffer, 0, MAX_BUF);
                 RRCSetupComplete msg3 = {3};
                 packetsize = pack_msg3(buffer, &msg3);
-                bytes_send = send(socketfd, buffer, packetsize, 0);
+                bytes_send = send(*socketfd, buffer, packetsize, 0);
                 if (bytes_send < 0)
                 {
                     perror("ERROR in writting to socket.\n");
@@ -176,13 +186,12 @@ void messaging(SOCKET socketfd, int ue_id, int loopcount, int msg_per_loop)
         int seconds_to_sleep = (int)(interval - dif);
         if (seconds_to_sleep > 0)
         { /* don't sleep if we're already late */
-            printf("Sleep at %s", ctime(&start));
+            printf("End at %s", ctime(&start));
             sleep(seconds_to_sleep);
-            printf("Start at %s", ctime(&start));
         }
     }
 
-    close(socketfd);
+    close(*socketfd);
 }
 
 int random_ue_id(int minN, int maxN)
