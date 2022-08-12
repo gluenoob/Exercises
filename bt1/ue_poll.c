@@ -28,15 +28,15 @@
 #define WHT "\x1B[37m"
 #define RESET "\x1B[0m"
 
-
-void print_time(); // Printf current time
-int random_ue_id(int minN, int maxN); // Generate random ue-ID from minN to maxN
+// Addition funtion
+void print_time();
+int random_ue_id(int minN, int maxN);
 
 // Return a connected socket to the gnb
 SOCKET get_connect_socket();
 
 // Send and receive msg function
-void messaging(SOCKET socketfd, int ue_id);
+void messaging(SOCKET socketfd, int ue_id, int loopcount, int msg_per_loop);
 
 // message
 /*
@@ -56,7 +56,8 @@ int main(int argc, char *argv[])
     srand((int)time(0));
 
     int ue_id = random_ue_id(100, 999);
-    messaging(socketfd, ue_id);
+    int loop = 5, msg_per_loop = 10;
+    messaging(socketfd, ue_id, loop, msg_per_loop);
 
     return 0;
 }
@@ -101,9 +102,9 @@ SOCKET get_connect_socket()
     return socketfd;
 }
 
-void messaging(SOCKET socketfd, int ue_id)
+void messaging(SOCKET socketfd, int ue_id, int loopcount, int msg_per_loop)
 {
-    for (int j = 0; j < 2; j++)
+    for (int j = 0; j < loopcount; j++)
     {
         double interval = 1;       // 10 msg per second
         time_t start = time(NULL); // Start
@@ -111,7 +112,7 @@ void messaging(SOCKET socketfd, int ue_id)
         RRCSetupRequest msg1 = {1, ue_id, 3};
 
         int i = 0;
-        while (i < 1)
+        while (i < msg_per_loop)
         {
             // MSG1 RRCSetupRequest
             memset(buffer, 0, MAX_BUF);
@@ -172,7 +173,7 @@ void messaging(SOCKET socketfd, int ue_id)
             printf("Start at %s", ctime(&start));
         }
     }
-    getchar();
+
     close(socketfd);
 }
 
