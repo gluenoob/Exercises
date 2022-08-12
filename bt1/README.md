@@ -17,8 +17,8 @@ soure code:
 - gNB: gNB.c
 
 ### UE và gNB multiplexing
-Dùng non-blocking IO để gNB xử lý nhiều UE đồng thời
-Dùng multithreading để tạo nhiều UE chạy song song
+Dùng non-blocking IO để gNB xử lý nhiều UE đồng thời.
+Dùng multithreading để tạo nhiều UE chạy song song.
 source code:
 - header file: bt1.h
 - UE: ue_poll1.c
