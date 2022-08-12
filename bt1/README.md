@@ -18,7 +18,7 @@ soure code:
 
 ### UE và gNB multiplexing
 Dùng non-blocking IO để gNB xử lý nhiều UE đồng thời.<br />
-
+Dùng multi-threading để 10 UE gửi và nhận đồng thời. <br />
 source code:
 - header file: bt1.h
 - UE: ue_poll1.c
