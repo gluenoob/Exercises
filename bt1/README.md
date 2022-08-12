@@ -1,5 +1,5 @@
 # Bài tập 1: Mô phỏng RRC Connection Establishment
-![](image/bt1.png)
+![](image/bt1.png) <br />
 Điều kiện:
 - 10 UE, mỗi UE gửi 10 RRCSetupRequest/s
 - Sau 200s tính ra RRC_SR
