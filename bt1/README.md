@@ -13,7 +13,7 @@
 Dùng giao thức TCP để kết nối: <br />
 soure code:
 - header file: bt1.h
-- UE: ue_poll.c
+- UE: ue_single.c
 - gNB: gNB.c
 
 ### UE và gNB multiplexing
