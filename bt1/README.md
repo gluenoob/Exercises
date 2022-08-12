@@ -10,15 +10,15 @@
 3. RRCSetupComplete: ![](image/msg3.png)
 
 ### UE và gNB đơn
-Dùng giao thức TCP để kết nối:
+Dùng giao thức TCP để kết nối: <br />
 soure code:
 - header file: bt1.h
 - UE: ue_poll.c
 - gNB: gNB.c
 
 ### UE và gNB multiplexing
-Dùng non-blocking IO để gNB xử lý nhiều UE đồng thời.
-Dùng multithreading để tạo nhiều UE chạy song song.
+Dùng non-blocking IO để gNB xử lý nhiều UE đồng thời.<br />
+Dùng multithreading để tạo nhiều UE chạy song song.<br />
 source code:
 - header file: bt1.h
 - UE: ue_poll1.c
