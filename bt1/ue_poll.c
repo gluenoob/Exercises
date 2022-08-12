@@ -28,9 +28,9 @@
 #define WHT "\x1B[37m"
 #define RESET "\x1B[0m"
 
-// Addition funtion
-void print_time();
-int random_ue_id(int minN, int maxN);
+
+void print_time(); // Printf current time
+int random_ue_id(int minN, int maxN); // Generate random ue-ID from minN to maxN
 
 // Return a connected socket to the gnb
 SOCKET get_connect_socket();
