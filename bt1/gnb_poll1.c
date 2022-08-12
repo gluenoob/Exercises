@@ -200,11 +200,12 @@ int main(int argc, char *argv[])
 
             } // END got ready-to-read from poll()
         }     // END looping through sock fd
+        printf("RRC_SR = %d : %d\n", RRC_Succ, RRC_Att);
+
         // // Update time left to run
         // start = time(NULL);
-
     } // END while(1) loop
-    printf("RRC_SR = %d : %d\n", RRC_Succ, RRC_Att);
+
     close(socket_listener);
 
     return 0;
