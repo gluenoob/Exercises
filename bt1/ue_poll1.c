@@ -36,7 +36,7 @@ int random_ue_id(int minN, int maxN);
 SOCKET get_connect_socket();
 
 // Send and receive msg function
-void messaging(SOCKET socketfd, int ue_id);
+void messaging(SOCKET socketfd, int ue_id, int loopcount, int msg_per_loop);
 
 // message
 /*
@@ -47,16 +47,25 @@ void messaging(SOCKET socketfd, int ue_id);
 int main(int argc, char *argv[])
 {
 
-    SOCKET socketfd = get_connect_socket();
-    printf("Socket fd number: %d\n", socketfd);
     // Start communication
     printf("Start simulating...\n");
-
     int RRC_Att = 0, RRC_Succ = 0;
     srand((int)time(0));
 
-    int ue_id = random_ue_id(100, 999);
-    messaging(socketfd, ue_id);
+    // Chay tuan tu cac UE
+    int ue_count = 10;
+    for (int i = 0; i < ue_count; i++)
+    {
+        SOCKET socketfd = get_connect_socket();
+        printf("Socket fd number: %d\n", socketfd);
+
+        // Set up for sending and receiving message
+        int ue_id = random_ue_id(100, 999);
+        int loop = 5, msg_per_loop = 10;
+        messaging(socketfd, ue_id, loop, msg_per_loop);
+        // Enter input to continue to next UE
+        getchar();
+    }
 
     return 0;
 }
@@ -101,17 +110,17 @@ SOCKET get_connect_socket()
     return socketfd;
 }
 
-void messaging(SOCKET socketfd, int ue_id)
+void messaging(SOCKET socketfd, int ue_id, int loopcount, int msg_per_loop)
 {
-    for (int j = 0; j < 2; j++)
+    for (int j = 0; j < loopcount; j++)
     {
-        double interval = 1;       // 10 msg per second
+        double interval = 1;       // period of time to send msg_per_loop
         time_t start = time(NULL); // Start
         unsigned char buffer[MAX_BUF];
         RRCSetupRequest msg1 = {1, ue_id, 3};
 
         int i = 0;
-        while (i < 1)
+        while (i < msg_per_loop)
         {
             // MSG1 RRCSetupRequest
             memset(buffer, 0, MAX_BUF);
@@ -172,7 +181,7 @@ void messaging(SOCKET socketfd, int ue_id)
             printf("Start at %s", ctime(&start));
         }
     }
-    getchar();
+
     close(socketfd);
 }
 
