@@ -11,6 +11,9 @@
 #define MAX_BUF 1024
 #define SERVERADDR "127.0.0.1"
 #define PORT "5001"
+#define LOOPCOUNT  30 // Seconds for UE to send msg
+
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -55,7 +58,7 @@ int main(int argc, char *argv[])
 
     SOCKET fds[10] = {0};
     SOCKET sockfd;
-    int ue_count = 2;
+    int ue_count = 10;
 
     // connect ue_count socketfd to gNB
     for (int i = 0; i < ue_count; i++)
@@ -122,8 +125,8 @@ void *messaging(void *sockfd)
     SOCKET *socketfd;
     socketfd = (SOCKET *)sockfd;
     int ue_id = random_ue_id(100, 999);
-    int loopcount = 10; // SECONDS
-    for (int j = 0; j < loopcount; j++)
+    
+    for (int j = 0; j < LOOPCOUNT; j++)
     {
         double interval = 1;       // 1 second
         time_t start = time(NULL); // Start

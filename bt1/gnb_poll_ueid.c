@@ -40,18 +40,10 @@ int in_ue_list(uint32_t ue_id, uint32_t arr[]);
 void add_to_ue_list(uint32_t ue_id, uint32_t arr[], int *ue_count);
 // Del from ue_list after RRC_Succ
 void del_from_ue_list(uint32_t ue_id, uint32_t arr[], int *ue_count, int ue_list_size);
+// Print ue_list
+void print_arr(uint32_t arr[], int n);
 
 
-
-void print_arr(uint32_t arr[], int n)
-{
-    printf(RED "ue-list: ");
-    for (int i = 0; i < n; i++)
-    {
-        printf ("%d ", arr[i]);
-    }
-    printf("\n" RESET);
-}
 
 
 /*
@@ -192,13 +184,13 @@ int main(int argc, char *argv[])
                             {
                                 RRC_ReAtt += 1;
                                 
-                                printf(RED "UE-id: %u ReAttempt/" RESET, msg1.ue_id);
+                                printf(YEL "UE-id: %u ReAttempt/" RESET, msg1.ue_id);
                                 print_arr(ue_list, 20);
                             }
                             else
                             {
                                 add_to_ue_list(msg1.ue_id, ue_list, &ue_count);
-                                printf(RED "ADD NEW -- UE-id: %u " RESET, msg1.ue_id);
+                                printf(YEL "ADD NEW -- UE-id: %u " RESET, msg1.ue_id);
                                 print_arr(ue_list, 20);
                             }
                             // send msg2 RRCSetup
@@ -228,9 +220,10 @@ int main(int argc, char *argv[])
                             // Unpack msg3 and delete ue_id from ue_list
                             RRCSetupComplete msg3;
                             unpack_msg3(buffer, &msg3);
-                            del_from_ue_list(msg3.ue_id, ue_list, &ue_count, ue_list_size);
+                            
                             printf("[DL]:Received %d bytes: \n" MAG"\tmsg.type: %u\n\tmsg.ue-id: %u\n" RESET,
                                    bytes_recv, msg3.type3, msg3.ue_id);
+                            del_from_ue_list(msg3.ue_id, ue_list, &ue_count, ue_list_size);
                             printf("---------------------------------\n");
                             // memset(&msg1 , 0 , sizeof(msg1));
                         }
@@ -246,7 +239,8 @@ int main(int argc, char *argv[])
 
             } // END got ready-to-read from poll()
         }     // END looping through sock fd
-        printf("RRC_Succ/RRC_ReAtt/RRC_Att_total: %d / %d / %d\nRRC_SR = %.2lf%%\n", RRC_Succ, RRC_ReAtt, RRC_Att_total, ((double) RRC_Succ/(RRC_Att_total - RRC_ReAtt)) * 100);
+        printf("RRC_Succ/RRC_ReAtt/RRC_Att_total: %d / %d / %d\nRRC_SR = %.2lf%%\n", RRC_Succ, 
+        RRC_ReAtt, RRC_Att_total, ((double) RRC_Succ/(RRC_Att_total - RRC_ReAtt)) * 100);
 
         // // Update time left to run
         // start = time(NULL);
@@ -377,11 +371,21 @@ void del_from_ue_list(uint32_t ue_id, uint32_t arr[], int *ue_count, int ue_list
     {
         if (arr[i] == ue_id)
         {
-            printf(RED "REPORT del: UE_count: %d\n" RESET, *ue_count);
+            printf(YEL "DEL from UE_list:\nUE_count before: %d\n", *ue_count);
             arr[i] = -1;
             (*ue_count)--;
             print_arr(arr, 20);
-            printf(RED "UE_count after: %d\n" RESET, *ue_count);
+            printf(YEL "UE_count after: %d\n" RESET, *ue_count);
         }
     }
+}
+
+void print_arr(uint32_t arr[], int n)
+{
+    printf(YEL "ue-list: ");
+    for (int i = 0; i < n; i++)
+    {
+        printf ("%d ", arr[i]);
+    }
+    printf("\n" RESET);
 }
