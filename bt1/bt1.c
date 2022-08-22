@@ -158,7 +158,7 @@ unsigned int pack_msg1(unsigned char *buf, const RRCSetupRequest *msg1)
     packi32(buf, msg1->ue_id);
     buf += 4;
 
-    // pack msg1.ue-id
+    // pack msg1.cause
     size += 2;
     packi16(buf, msg1->cause);
     buf += 2;
@@ -200,14 +200,23 @@ unsigned int pack_msg3(unsigned char *buf, const RRCSetupComplete *msg3)
 {
     int size = 0;
     size += 1;
-    // pack msg1.type1
+    // pack msg3.type3
     *buf++ = msg3->type3;
+
+    // pack msg3.ue-id
+    size += 4;
+    packi32(buf, msg3->ue_id);
+    buf += 4;
 
     return size;
 }
 
 void unpack_msg3(unsigned char *buf, RRCSetupComplete *msg3)
 {
-    // Unpack msg1.type
+    // Unpack msg3.type
     msg3->type3 = *buf++;
+
+    // Unpack msg3.ue-id
+    msg3->ue_id = unpacku32(buf);
+    buf += 4;
 }
