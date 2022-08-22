@@ -16,10 +16,10 @@ Dùng giao thức TCP để kết nối: <br />
 - UE: ue_single.c
 - gNB: gNB.c
 
-### UE và gNB multiplexing
-Dùng non-blocking IO để gNB xử lý nhiều UE đồng thời.<br />
+### Multi-UE gNB
+Dùng non-blocking IO để gNB xử lý nhiều UE.<br />
 Dùng multi-threading để 10 UE gửi và nhận đồng thời. <br />
 
 - header file: bt1.h
-- UE: ue_poll1.c
-- gNB: gnb_poll1.c
+- UE: ue_poll1.c, ue_poll_ueid (thêm ueid cho msg3)
+- gNB: gnb_poll1.c, gnb_poll_ueid (thêm RRC_ReAtt và ue_list)
