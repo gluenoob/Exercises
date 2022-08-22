@@ -17,6 +17,7 @@ typedef struct
 typedef struct
 {
     uint8_t type3;
+    uint32_t ue_id;
 } RRCSetupComplete;
 
 // Serialization
