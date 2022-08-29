@@ -13,10 +13,10 @@
 #define SERVERADDR "127.0.0.1"
 #define PORT "5001"
 
-#define UE_NUM 10
-#define DISCARD_RATE 0.2
-#define LOOP_COUNT 5
-#define MSG_PER_LOOP 10
+#define UE_NUM 100
+#define DISCARD_RATE 0.1
+#define LOOP_COUNT 10
+#define MSG_PER_LOOP 100
 
 #include <stdio.h>
 #include <stdlib.h>

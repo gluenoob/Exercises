@@ -10,7 +10,7 @@
 #define ISVALIDSOCKET(s) ((s) >= 0)
 #define SOCKET int
 #define GNB_BACKLOG 100
-#define MAX_BUF 1024
+#define MAX_BUF 2048
 #define PORT "5001" // Port to listen()
 #define UE_LIST_SIZE 1000
 
@@ -270,7 +270,7 @@ void del_from_pfds(struct pollfd pfds[], int i, int *fd_count)
 int in_ue_list(uint32_t ue_id, uint32_t arr[])
 {
     int check = 0;
-    for (int i = 0; i < 20; i++)
+    for (int i = 0; i < UE_LIST_SIZE; i++)
     {
         if (ue_id == arr[i])
         {
@@ -311,7 +311,7 @@ void del_from_ue_list(uint32_t ue_id, uint32_t arr[], int *ue_count, int ue_list
             printf(YEL "DEL from UE_list: ue_id (%u)\nUE_count before: %d\n", ue_id, *ue_count);
             arr[i] = -1;
             (*ue_count)--;
-            print_arr(arr, 20);
+            print_arr(arr, *ue_count);
             printf(YEL "UE_count after: %d\n" RESET, *ue_count);
         }
     }
@@ -349,13 +349,13 @@ void msg_handle(unsigned char buffer[], SOCKET sender_fd, int *ue_count, int byt
             RRC_ReAtt += 1;
 
             printf(YEL "UE-id: %u ReAttempt/" RESET, msg1.ue_id);
-            print_arr(ue_list, 20);
+            print_arr(ue_list, *ue_count);
         }
         else
         {
             add_to_ue_list(msg1.ue_id, ue_list, ue_count);
             printf(YEL "ADD NEW -- UE-id: %u " RESET, msg1.ue_id);
-            print_arr(ue_list, 20);
+            print_arr(ue_list, *ue_count);
             num_element++; // Increament number in KPI_timer
         }
         // send msg2 RRCSetup
