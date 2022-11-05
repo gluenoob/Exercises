@@ -38,6 +38,9 @@ SOCKET get_listener_socket(void);
 int msleep(long msec);
 void print_current_time_with_ms (void);
 
+typedef RRC_MIB {
+    int frame;
+} RRC_MIB;
 
 /*
 ** MAIN function
@@ -75,15 +78,22 @@ void *serverThreadFunc(void *arg)
         fprintf(stderr, "Accept() failed (%d)\n", errno);        
     }
     
-    unsigned int number1;
-    scanf("%u",&number1);
-    int bytes_sent = send(socketfd, &number1, 4, 0);
-    if (bytes_sent <= 0)
+    /*
+     ** Send SFN to UE
+     */
+    struct timespec ts;
+    long delay = 0;
+    unsigned int current_SFN = SFN;
+
+    RRC_MIB Sent_MIB;
+    Sent_MIB.frame = SFN;
+    // scanf("%d", &number1);
+    int bytes_send = send(socket_client, &Sent_MIB, sizeof(RRC_MIB), 0);
+    if (bytes_send < 0)
     {
-         perror("ERROR in sending to socket");
-         exit(EXIT_FAILURE);
+        perror("ERROR in writting to socket.");
     }
-    SFN = number1;
+    SFN = Sent_MIB.frame;
 
 }
 
