@@ -21,6 +21,10 @@
 
 int SFN = 0;
 
+typedef RRC_MIB {
+    int frame;
+} RRC_MIB;
+
 #define ISVALIDSOCKET(s) ((s) >= 0)
 #define SOCKET int
 #define MAX_BUF 1024
@@ -55,16 +59,20 @@ void *receiving(void *arg)
 {
     
     SOCKET socketfd = get_connect_socket();
-
+    char buffer[1024];
+    memset(buffer, 0, 1024);
     unsigned int number1;
-    int bytes_recv = recv(socketfd, &number1, 4, 0);
+
+    int bytes_recv = recv(socketfd, buffer, 1024, 0);
     if (bytes_recv <= 0)
     {
-         perror("ERROR in reading from socket");
-         exit(EXIT_FAILURE);
+        perror("ERROR in reading from socket");
+        exit(EXIT_FAILURE);
     }
-    
-    SFN = number1;
+
+    RRC_MIB *Recv_MIB = (RRC_MIB *)buffer;
+    SFN = Recv_MIB->frame;
+
 }
 
 /*
